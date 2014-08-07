@@ -1,18 +1,24 @@
 function Creature(x, y, height, width) {
     this.speed = 5;
     this.movementSize = 2;
+
     this.currentX = x || Math.floor((Math.random() * window.app.canvasWidth) + 1);
     this.currentY = x || Math.floor((Math.random() * window.app.canvasHeight) + 1);
+
     this.height = height || 3;
     this.width = width || 3;
-    this.maxAge = 100;
+
+    this.maxAge = 1000;
     this.currentAge = 0;
     this.dead = false;
+
+    this.maxHunger = 100;
+    this.hunger = 0;
+    this.ticksAtMaxHunger = 0;
 }
 
 Creature.prototype.doTick = function() {
     var randomNumber = Math.floor((Math.random() * 10) + 1);
-    this.currentAge++;
 
     if(this.dead || this.currentAge === this.maxAge) {
         if(!this.dead) {
@@ -21,7 +27,23 @@ Creature.prototype.doTick = function() {
         return;
     }
 
+    this.currentAge++;
+
+    if(this.ticksAtMaxHunger === 21) {
+        console.log('Pixel died of hunger.');
+        this.die();
+    }
+
+    if(this.hunger === this.maxHunger) {
+        this.ticksAtMaxHunger += 1;
+    }
+
     if(randomNumber >= this.speed) {
+        this.hunger += this.movementSize;
+        if(this.hunger > this.maxHunger) {
+            this.hunger = this.maxHunger;
+        }
+
         this.doAction();
         return;
     }
