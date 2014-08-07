@@ -27,7 +27,8 @@ xEvolution.prototype.addCreature = function() {
 xEvolution.prototype.tick = function() {
     this.creatures.forEach(function(element, index, array) {
         if(element.decomposed) {
-            this.deadCreatures.push(this.creatures.splice(index));
+            this.creatures.splice(index, 1);
+            this.deadCreatures.push(element);
             return;
         }
 
