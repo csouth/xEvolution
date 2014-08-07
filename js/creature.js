@@ -1,9 +1,13 @@
-function Creature(x, y, height, width) {
+function Creature(id, x, y, height, width) {
+    this.id = id;
     this.speed = 5;
     this.movementSize = 2;
 
-    this.currentX = x || Math.floor((Math.random() * window.app.canvasWidth) + 1);
-    this.currentY = x || Math.floor((Math.random() * window.app.canvasHeight) + 1);
+    this.currentX = x || -1;
+    this.currentY = y || -1;
+    if(this.currentX == -1 || this.currentY == -1) {
+        this.getRandomStartingPosition();
+    }
 
     this.height = height || 3;
     this.width = width || 3;
@@ -11,6 +15,8 @@ function Creature(x, y, height, width) {
     this.maxAge = 1000;
     this.currentAge = 0;
     this.dead = false;
+    this.ticksDead = 0;
+    this.decomposed = false;
 
     this.maxHunger = 100;
     this.hunger = 0;
@@ -21,8 +27,14 @@ Creature.prototype.doTick = function() {
     var randomNumber = Math.floor((Math.random() * 10) + 1);
 
     if(this.dead || this.currentAge === this.maxAge) {
+        if(this.ticksDead === 30) {
+            this.decompose();
+        }
+
         if(!this.dead) {
             this.die();
+        } else {
+            this.ticksDead += 1;
         }
         return;
     }
@@ -30,7 +42,6 @@ Creature.prototype.doTick = function() {
     this.currentAge++;
 
     if(this.ticksAtMaxHunger === 21) {
-        console.log('Pixel died of hunger.');
         this.die();
     }
 
@@ -39,11 +50,6 @@ Creature.prototype.doTick = function() {
     }
 
     if(randomNumber >= this.speed) {
-        this.hunger += this.movementSize;
-        if(this.hunger > this.maxHunger) {
-            this.hunger = this.maxHunger;
-        }
-
         this.doAction();
         return;
     }
@@ -51,15 +57,26 @@ Creature.prototype.doTick = function() {
 
 Creature.prototype.doAction = function() {
     var randomNumber = Math.floor((Math.random() * 100) + 1);
+    var targetX = this.currentX;
+    var targetY = this.currentY;
 
     if(randomNumber <= 25) { // Go left one space
-        this.move(this.currentX - this.movementSize, this.currentY);
+        targetX -= this.movementSize;
     } else if(randomNumber <= 50) { // Go right one space
-        this.move(this.currentX + this.movementSize, this.currentY);
+        targetX += this.movementSize;
     } else if(randomNumber <= 75) { // Go up one space
-        this.move(this.currentX, this.currentY - this.movementSize);
+        targetY -= this.movementSize;
     } else { // Go down one space
-        this.move(this.currentX, this.currentY + this.movementSize);
+        targetY += this.movementSize;
+    }
+
+    if(window.app.positionFree(this.getPositioning(targetX, targetY), this.id)) {
+        this.move(targetX, targetY);
+
+        this.hunger += this.movementSize;
+        if(this.hunger > this.maxHunger) {
+            this.hunger = this.maxHunger;
+        }
     }
 };
 
@@ -90,4 +107,54 @@ Creature.prototype.die = function() {
     window.app.canvas.fillRect(this.currentX, this.currentY, this.height, this.width);
 
     this.dead = true;
+};
+
+Creature.prototype.decompose = function() {
+    window.app.canvas.fillStyle = '#fff';
+    window.app.canvas.fillRect(this.currentX, this.currentY, this.height, this.width);
+
+    this.decomposed = true;
+};
+
+Creature.prototype.getPositioning = function(x, y) {
+    x = x || this.currentX;
+    y = y || this.currentY;
+
+    var retVal = {
+        minX: 0,
+        minY: 0,
+        maxX: 0,
+        maxY: 0
+    };
+
+    retVal.minX = x;
+    retVal.minY = y;
+    retVal.maxY = y + this.width;
+    retVal.maxX = x + this.height;
+
+    return retVal;
+};
+
+Creature.prototype.getRandomStartingPosition = function() {
+    var haveLocation = false;
+    var x = 0;
+    var y = 0;
+
+    while(!haveLocation) {
+        x = Math.floor((Math.random() * window.app.canvasWidth) + 1);
+        y = Math.floor((Math.random() * window.app.canvasHeight) + 1);
+        if(window.app.positionFree(x, y)) {
+            this.currentX = x;
+            this.currentY = y;
+        }
+
+        haveLocation = true;
+    }
+};
+
+Creature.prototype.isIntersecting = function (positioning) {
+    var a = this.getPositioning();
+    var b = positioning;
+
+    return (a.minX <= b.maxX && b.minX <= a.maxX && a.minY <= b.maxY && b.minY <= a.maxY);
 };
