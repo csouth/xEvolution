@@ -40,4 +40,3 @@ xEvolution.prototype.stop = function() {
 };
 
 window.app = new xEvolution();
-window.app.addCreature();
