@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <style>
+            canvas {
+                border: 1px solid #000;
+            }
+        </style>
+    </head>
+    <body>
+        <button id="startStop">Start</button>
+        <button id="addCreature">Add Creature</button>
+        <script src="./js/creature.js"></script>
+        <script src="./js/app.js"></script>
+        <script type="text/javascript">
+            (function() {
+                document.getElementById('startStop').addEventListener('click', function() {
+                    if(this.innerHTML == 'Start') {
+                        this.innerHTML = 'Stop';
+                        window.app.start();
+                        return;
+                    }
+
+                    this.innerHTML = 'Start';
+                    window.app.stop();
+                });
+
+                document.getElementById('addCreature').addEventListener('click', function() {
+                    window.app.addCreature();
+                });
+            })();
+        </script>
+    </body>
+
+</html>
