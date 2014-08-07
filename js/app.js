@@ -2,6 +2,9 @@ function xEvolution(height, width) {
     this.canvasHeight = height || 600;
     this.canvasWidth  = width || 600;
     this.canvas = this.createCanvas(this.canvasHeight, this.canvasWidth);
+    this.canvas.fillStyle = '#afa';
+    this.canvas.fillRect(0, 0, this.canvasHeight, this.canvasWidth);
+
     this.stopped = true;
     this.msBetweenTicks = 100;
 

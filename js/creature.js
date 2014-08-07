@@ -26,7 +26,7 @@ function Creature(id, x, y, height, width) {
 Creature.prototype.doTick = function() {
     var randomNumber = Math.floor((Math.random() * 10) + 1);
 
-    if(this.dead || this.currentAge === this.maxAge) {
+    if(this.dead || this.currentAge >= this.maxAge) {
         if(this.ticksDead === 30) {
             this.decompose();
         }
@@ -43,6 +43,10 @@ Creature.prototype.doTick = function() {
 
     if(this.ticksAtMaxHunger === 21) {
         this.die();
+    }
+
+    if(this.hunger <= (this.maxHunger/4)*3) {
+        this.maxAge -= 2;
     }
 
     if(this.hunger === this.maxHunger) {
@@ -74,6 +78,7 @@ Creature.prototype.doAction = function() {
         this.move(targetX, targetY);
 
         this.hunger += this.movementSize;
+        console.log(this.hunger);
         if(this.hunger > this.maxHunger) {
             this.hunger = this.maxHunger;
         }
@@ -81,6 +86,17 @@ Creature.prototype.doAction = function() {
 };
 
 Creature.prototype.move = function(x, y) {
+    //.join('').split(/[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}/)
+    var colors = window.app.canvas.getImageData(x, y, this.width, this.height).data;
+
+    for(i=0; i<colors.length-1; i+=4) {
+        if(colors[i] === 170 && colors[i+1] === 255 && colors[i+2] === 170) {
+            this.hunger -=1;
+            if(this.hunger < 0) {
+                this.hunger = 0;
+            }
+        }
+    }
 
     window.app.canvas.fillStyle = '#fff';
     window.app.canvas.fillRect(this.currentX, this.currentY, this.height, this.width);
