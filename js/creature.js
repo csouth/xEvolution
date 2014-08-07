@@ -5,10 +5,24 @@ function Creature(x, y, height, width) {
     this.currentY = x || Math.floor((Math.random() * window.app.canvasHeight) + 1);
     this.height = height || 3;
     this.width = width || 3;
+    this.maxAge = 1000;
+    this.currentAge = 0;
+    this.dead = false;
 }
 
 Creature.prototype.doTick = function() {
     var randomNumber = Math.floor((Math.random() * 10) + 1);
+    this.currentAge++;
+
+    if(this.dead || this.currentAge > this.maxAge) {
+        return;
+    }
+
+    if(this.currentAge === this.maxAge) {
+        this.die();
+        return;
+    }
+
     if(randomNumber >= this.speed) {
         this.doAction();
         return;
@@ -49,4 +63,11 @@ Creature.prototype.move = function(x, y) {
     this.currentX = x;
     this.currentY = y;
 
+};
+
+Creature.prototype.die = function() {
+    window.app.canvas.fillStyle = '#f00';
+    window.app.canvas.fillRect(this.currentX, this.currentY, this.height, this.width);
+
+    this.dead = 0;
 };
