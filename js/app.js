@@ -7,6 +7,8 @@ function xEvolution(height, width) {
 
     this.creatures = [];
     this.deadCreatures = [];
+
+		this.tick = this.tick.bind(this);
 }
 
 xEvolution.prototype.createCanvas = function(height, width) {
@@ -19,26 +21,21 @@ xEvolution.prototype.createCanvas = function(height, width) {
 };
 
 xEvolution.prototype.addCreature = function() {
-    this.creatures.push(new Creature(this.generateCreatureId()));
+    this.creatures.push(new Creature(this.generateCreatureId(), this));
 };
 
 xEvolution.prototype.tick = function() {
-    var decomposed = [];
-    for(i=0; i < window.app.creatures.length; i++) {
-        if(!window.app.creatures[i].decomposed) {
-            window.app.creatures[i].doTick();
-            continue;
-        }
+		var decomposed = this.creatures.filter(function (creature) {
+				creature.doTick();
+        return creature.decomposed;
+		});
 
-        decomposed.push(i);
-    }
-
-    decomposed.forEach(function(element, index, array) {
-        window.app.deadCreatures.push(window.app.creatures.splice(index));
-    });
+    decomposed.forEach(function(element) {
+        this.deadCreatures.push(element);
+    }.bind(this));
 
     if(!this.stopped) {
-        setTimeout(window.app.tick, window.app.msBetweenTicks);
+        setTimeout(this.tick, this.msBetweenTicks);
     }
 };
 
@@ -64,9 +61,9 @@ xEvolution.prototype.generateCreatureId = (function() {
 })();
 
 xEvolution.prototype.positionFree = function(positioning, creatureId) {
-    for(i=0; i < window.app.creatures.length; i++) {
-        if(!window.app.creatures[i].decomposed) {
-            if(window.app.creatures[i].id !== creatureId && window.app.creatures[i].isIntersecting(positioning)) {
+    for(i=0; i < this.creatures.length; i++) {
+        if(!this.creatures[i].decomposed) {
+            if(this.creatures[i].id !== creatureId && this.creatures[i].isIntersecting(positioning)) {
                 return false;
             }
         }
