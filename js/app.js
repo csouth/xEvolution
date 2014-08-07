@@ -8,7 +8,7 @@ function xEvolution(height, width) {
     this.creatures = [];
     this.deadCreatures = [];
 
-		this.tick = this.tick.bind(this);
+    this.tick = this.tick.bind(this);
 }
 
 xEvolution.prototype.createCanvas = function(height, width) {
@@ -25,13 +25,13 @@ xEvolution.prototype.addCreature = function() {
 };
 
 xEvolution.prototype.tick = function() {
-		var decomposed = this.creatures.filter(function (creature) {
-				creature.doTick();
-        return creature.decomposed;
-		});
+    this.creatures.forEach(function(element, index, array) {
+        if(element.decomposed) {
+            this.deadCreatures.push(this.creatures.splice(index));
+            return;
+        }
 
-    decomposed.forEach(function(element) {
-        this.deadCreatures.push(element);
+        element.doTick();
     }.bind(this));
 
     if(!this.stopped) {

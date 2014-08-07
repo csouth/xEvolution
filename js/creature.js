@@ -1,6 +1,5 @@
-function Creature(id, app, x, y, height, width) {
+function Creature(id, x, y, height, width) {
     this.id = id;
-		this.app = app;
     this.speed = 5;
     this.movementSize = 2;
 
@@ -20,7 +19,7 @@ function Creature(id, app, x, y, height, width) {
     this.decomposed = false;
 
     this.maxHunger = 100;
-    this.hunger = 1;
+    this.hunger = 0;
     this.ticksAtMaxHunger = 0;
 }
 
@@ -71,7 +70,7 @@ Creature.prototype.doAction = function() {
         targetY += this.movementSize;
     }
 
-    if(this.app.positionFree(this.getPositioning(targetX, targetY), this.id)) {
+    if(window.app.positionFree(this.getPositioning(targetX, targetY), this.id)) {
         this.move(targetX, targetY);
 
         this.hunger += this.movementSize;
@@ -83,20 +82,20 @@ Creature.prototype.doAction = function() {
 
 Creature.prototype.move = function(x, y) {
 
-    this.app.canvas.fillStyle = '#fff';
-    this.app.canvas.fillRect(this.currentX, this.currentY, this.height, this.width);
+    window.app.canvas.fillStyle = '#fff';
+    window.app.canvas.fillRect(this.currentX, this.currentY, this.height, this.width);
 
-    this.app.canvas.fillStyle = '#000';
+    window.app.canvas.fillStyle = '#000';
 
-    if((x+this.width) > this.app.canvasWidth || (x-this.width) < 0) {
-        x = this.app.canvasWidth-this.width;
+    if((x+this.width) > window.app.canvasWidth || (x-this.width) < 0) {
+        x = window.app.canvasWidth-this.width;
     }
 
-    if((y+this.height) > this.app.canvasHeight || (x-this.height) < 0) {
-        y = this.app.canvasHeight - this.height;
+    if((y+this.height) > window.app.canvasHeight || (x-this.height) < 0) {
+        y = window.app.canvasHeight - this.height;
     }
 
-    this.app.canvas.fillRect(x, y, this.height, this.width);
+    window.app.canvas.fillRect(x, y, this.height, this.width);
 
     this.currentX = x;
     this.currentY = y;
@@ -104,15 +103,15 @@ Creature.prototype.move = function(x, y) {
 };
 
 Creature.prototype.die = function() {
-    this.app.canvas.fillStyle = '#f00';
-    this.app.canvas.fillRect(this.currentX, this.currentY, this.height, this.width);
+    window.app.canvas.fillStyle = '#f00';
+    window.app.canvas.fillRect(this.currentX, this.currentY, this.height, this.width);
 
     this.dead = true;
 };
 
 Creature.prototype.decompose = function() {
-    this.app.canvas.fillStyle = '#fff';
-    this.app.canvas.fillRect(this.currentX, this.currentY, this.height, this.width);
+    window.app.canvas.fillStyle = '#fff';
+    window.app.canvas.fillRect(this.currentX, this.currentY, this.height, this.width);
 
     this.decomposed = true;
 };
@@ -142,9 +141,9 @@ Creature.prototype.getRandomStartingPosition = function() {
     var y = 0;
 
     while(!haveLocation) {
-        x = Math.floor((Math.random() * this.app.canvasWidth) + 1);
-        y = Math.floor((Math.random() * this.app.canvasHeight) + 1);
-        if(this.app.positionFree(x, y)) {
+        x = Math.floor((Math.random() * window.app.canvasWidth) + 1);
+        y = Math.floor((Math.random() * window.app.canvasHeight) + 1);
+        if(window.app.positionFree(x, y)) {
             this.currentX = x;
             this.currentY = y;
         }
