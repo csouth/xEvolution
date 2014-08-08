@@ -2,6 +2,8 @@ function Creature(id, x, y, height, width) {
     this.id = id;
     this.speed = 5;
     this.movementSize = 2;
+    this.outsideColor = '#FFFF00';
+    this.insideColor = '#000';
 
     this.currentX = x || -1;
     this.currentY = y || -1;
@@ -21,12 +23,13 @@ function Creature(id, x, y, height, width) {
     this.maxHunger = 100;
     this.hunger = 0;
     this.ticksAtMaxHunger = 0;
+    this.ticksAboveHalf = 0;
 }
 
 Creature.prototype.doTick = function() {
     var randomNumber = Math.floor((Math.random() * 10) + 1);
 
-    if(this.dead || this.currentAge >= this.maxAge) {
+    if(this.dead) {
         if(this.ticksDead === 30) {
             this.decompose();
         }
@@ -45,6 +48,19 @@ Creature.prototype.doTick = function() {
         this.die();
     }
 
+    if(this.hunger >= this.maxHunger/2) {
+        this.ticksAboveHalf++;
+    } else {
+        this.ticksAboveHalf = 0;
+    }
+
+    if(this.ticksAboveHalf >= 25) {
+        this.ticksAboveHalf = 0;
+        this.width += 1;
+        this.height += 1;
+        this.maxHunger += 10;
+    }
+
     if(this.hunger <= (this.maxHunger/4)*3) {
         this.maxAge -= 2;
     }
@@ -60,25 +76,36 @@ Creature.prototype.doTick = function() {
 };
 
 Creature.prototype.doAction = function() {
-    var randomNumber = Math.floor((Math.random() * 100) + 1);
+    var randomNumber = Math.floor((Math.random() * 80) + 1);
     var targetX = this.currentX;
     var targetY = this.currentY;
 
-    if(randomNumber <= 25) { // Go left one space
+    if(randomNumber <= 10) { // Go west one space
         targetX -= this.movementSize;
-    } else if(randomNumber <= 50) { // Go right one space
+    } else if(randomNumber <= 20) { // Go east one space
         targetX += this.movementSize;
-    } else if(randomNumber <= 75) { // Go up one space
+    } else if(randomNumber <= 30) { // Go north one space
         targetY -= this.movementSize;
-    } else { // Go down one space
+    } else if(randomNumber <= 40) { // Go south one space
         targetY += this.movementSize;
+    } else if(randomNumber <= 50) { // Go north-west one space
+        targetY += this.movementSize;
+        targetX -= this.movementSize;
+    } else if(randomNumber <= 60) { // Go north-east one space
+        targetY += this.movementSize;
+        targetX += this.movementSize;
+    } else if(randomNumber <= 70) { // Go south-east one space
+        targetY -= this.movementSize;
+        targetX += this.movementSize;
+    } else { // Go south-west one space
+        targetY -= this.movementSize;
+        targetX -= this.movementSize;
     }
 
     if(window.app.positionFree(this.getPositioning(targetX, targetY), this.id)) {
         this.move(targetX, targetY);
 
         this.hunger += this.movementSize;
-        console.log(this.hunger);
         if(this.hunger > this.maxHunger) {
             this.hunger = this.maxHunger;
         }
@@ -86,11 +113,11 @@ Creature.prototype.doAction = function() {
 };
 
 Creature.prototype.move = function(x, y) {
-    //.join('').split(/[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}/)
     var colors = window.app.canvas.getImageData(x, y, this.width, this.height).data;
 
     for(i=0; i<colors.length-1; i+=4) {
-        if(colors[i] === 170 && colors[i+1] === 255 && colors[i+2] === 170) {
+        if(colors[i] === 0 && colors[i+1] === 100 && colors[i+2] === 0) {
+            window.app.foodEaten++;
             this.hunger -=1;
             if(this.hunger < 0) {
                 this.hunger = 0;
@@ -101,7 +128,7 @@ Creature.prototype.move = function(x, y) {
     window.app.canvas.fillStyle = '#fff';
     window.app.canvas.fillRect(this.currentX, this.currentY, this.height, this.width);
 
-    window.app.canvas.fillStyle = '#000';
+    window.app.canvas.fillStyle = this.outsideColor;
 
     if((x+this.width) > window.app.canvasWidth || (x-this.width) < 0) {
         x = window.app.canvasWidth-this.width;
@@ -112,6 +139,8 @@ Creature.prototype.move = function(x, y) {
     }
 
     window.app.canvas.fillRect(x, y, this.height, this.width);
+    window.app.canvas.fillStyle = this.insideColor;
+    window.app.canvas.fillRect(x+1, y+1, this.height-2, this.width-2);
 
     this.currentX = x;
     this.currentY = y;
