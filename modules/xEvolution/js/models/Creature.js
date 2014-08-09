@@ -70,6 +70,7 @@ define([
                     decomposed: true
                 });
                 console.log("Creature has decomposed");
+                this.stopListening(this.board,'tick');
             }
         },
         clear: function(x,y,w,h){
@@ -191,7 +192,6 @@ define([
             this.move();
             this.decompose();
             this.age();
-            
          },
          move: function(){
              if(!this.get('dead')){
