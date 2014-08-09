@@ -39,7 +39,7 @@ nav ul li:not(:first-child){
     border-left: 1px solid #000;
 }
 
-canvas{
+.canvas{
     border: 1px solid #000;
     display: block;
     width: 100%;

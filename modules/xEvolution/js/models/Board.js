@@ -1,7 +1,9 @@
 define([
-    "xEvolution/app"
+    "xEvolution/app",
+    "xEvolution/models/Creature"
 ],function(
-    app
+    app,
+    Creature
 ){
     var model    =   app.Model.extend({
         _urlRoot:   "",
@@ -33,8 +35,10 @@ define([
             }
         },
         add: function(){
-            this.creatures.push(new Creature({
-                
+            var position    =   this.getRandomPosition();
+            this.get('creatures').push(new Creature({
+                x:  position.x,
+                y:  position.y
             },{
                 board: this
             }));
@@ -46,7 +50,13 @@ define([
             };
         },
         getRandomPosition: function(){
-            
+            var dimensions  =   this.getDimensions();
+            var x           =   Math.floor(Math.random()*dimensions.width);
+            var y           =   Math.floor(Math.random()*dimensions.height);
+            return {
+                x:  x,
+                y:  y
+            };
         },
         tick: function(obj){
             if(obj && typeof obj.tick==="function"){
@@ -56,7 +66,7 @@ define([
                 return;
             }
             this.processing =   true;
-                
+            this.trigger('tick');
             this.processing =   false;
         }
     });
