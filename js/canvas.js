@@ -4,6 +4,7 @@
         this.canvas = null;
         this.canvasContext = null;
     };
+    var vault = new CanvasVault();
 
     var Canvas   = function(settings) {
         settings = settings || {};
@@ -18,21 +19,19 @@
             this.settings[attrName] = settings[attrName];
         }
 
-        this.canvasElement = null;
-        this.canvasContext = null;
         this.setupCanvas();
     };
 
     Canvas.prototype.setupCanvas  = function() {
-        this.canvasElement        = global.document.createElement('canvas');
-        this.canvasElement.width  = this.settings.width;
-        this.canvasElement.height = this.settings.height;
-        this.canvasElement.style  = this.settings.style;
+        vault.canvas        = global.document.createElement('canvas');
+        vault.canvas.width  = this.settings.width;
+        vault.canvas.height = this.settings.height;
+        vault.canvas.style  = this.settings.style;
 
-        this.canvasContext        = this.canvasElement.getContext('2d');
+        vault.canvasContext        = vault.canvas.getContext('2d');
 
-        this.canvasContext.fillStyle = this.backgroundColor;
-        this.canvasContext.fillRect(0, 0, this.settings.width, this.settings.height);
+        vault.canvasContext.fillStyle = this.settings.backgroundColor;
+        vault.canvasContext.fillRect(0, 0, this.settings.width, this.settings.height);
     };
 
     Canvas.prototype.isEmpty = function(x, y, width, height) {
@@ -40,7 +39,7 @@
         width  = width  || 1;
         var available = true;
 
-        var colors = this.canvasContext.getImageData(x, y, width, height).data;
+        var colors = vault.canvasContext.getImageData(x, y, width, height).data;
         var _i;
         for(_i=0; _i<colors.length-1; _i+=4) {
             if(colors[_i] !== 255 || colors[_i+1] !== 255 || colors[_i+2] !== 255) {
@@ -54,8 +53,16 @@
     Canvas.prototype.clearPixels = function(x, y, width, height) {
         width  = width  || 1;
         height = height || 1;
-        this.canvasContext.fillStyle = 'rgb(255, 255, 255, 1)';
-        this.canvasContext.fillRect(x, y, width, height);
+        vault.canvasContext.fillStyle = 'rgb(255, 255, 255, 1)';
+        vault.canvasContext.fillRect(x, y, width, height);
+    };
+
+    Canvas.prototype.getCanvas = function() {
+        return vault.canvas;
+    };
+
+    Canvas.prototype.getCanvasContext = function() {
+        return vault.canvasContext;
     };
 
     if(typeof global.xEvolution === 'undefined') {
