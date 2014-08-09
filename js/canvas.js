@@ -60,30 +60,30 @@
 
     if(typeof global.xEvolution === 'undefined') {
         Object.defineProperty(global, 'xEvolution', {
-            writable : true,
-            enumerable : true,
-            configurable : true,
+            writable : false,
+            enumerable : false,
+            configurable : false,
             value: {}
         });
     }
     Object.defineProperty(global.xEvolution, 'Canvas', {
-        writable : true,
-        enumerable : true,
-        configurable : true,
+        writable : false,
+        enumerable : false,
+        configurable : false,
         value: {}
     });
     Object.defineProperty(global.xEvolution.Canvas, 'getInstance', {
-        writable : true,
-        enumerable : true,
-        configurable : true,
+        writable : false,
+        enumerable : false,
+        configurable : false,
         value: function(settings) {
             settings = settings || {};
 
             if(typeof this.instance === 'undefined') {
                 Object.defineProperty(global.xEvolution.Canvas, 'instance', {
-                    writable : true,
-                    enumerable : true,
-                    configurable : true,
+                    writable : false,
+                    enumerable : false,
+                    configurable : false,
                     value: new Canvas(settings)
                 });
             }
