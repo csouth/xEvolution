@@ -19,8 +19,8 @@ define([
             return {};
         },
         action: function(event){
-            var action   =   $(event.currentTarget).data('route');
-            this.canvasView[action]();
+            var action   =   $(event.currentTarget).data('action');
+            this.canvasView.action(action);
         }
     });
     return view;
