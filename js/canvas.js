@@ -57,6 +57,15 @@
         vault.canvasContext.fillRect(x, y, width, height);
     };
 
+    Canvas.prototype.drawRectangle = function(x, y, width, height, color) {
+        width  = width  || 1;
+        height = height || 1;
+        color  = color  || 'rgba(0,0,0,255)';
+
+        vault.canvasContext.fillStyle = color;
+        vault.canvasContext.fillRect(x, y, width, height);
+    };
+
     Canvas.prototype.getCanvas = function() {
         return vault.canvas;
     };
