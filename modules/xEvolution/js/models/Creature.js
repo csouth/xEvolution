@@ -39,21 +39,17 @@ define([
         update: function(){
             this.checkHunger();
             this.checkDecompose();
+            this.clearPrevious();
             
+            this.draw();
+        },
+        clearPrevious: function(){
             var pX  =   this.previous('x');
             var pY  =   this.previous('y');
             var pW  =   this.previous('width');
             var pH  =   this.previous('height');
             
-            var cX  =   this.get('x');
-            var cY  =   this.get('y');
-            var cW  =   this.get('width');
-            var cH  =   this.get('height');
-            
-            if(pX!=cX || pY!=cY || pW!=cW || pH!=cH){
-                this.clear(pX,pY,pW,pH);
-            }
-            this.draw();
+            this.clear(pX,pY,pW,pH);
         },
         checkHunger: function(){
             var ticksAtMaxHunger    =   this.get('ticksAtMaxHunger');
