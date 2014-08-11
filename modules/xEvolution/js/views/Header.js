@@ -9,8 +9,8 @@ define([
         tagName:        "header",
         canvasView:     null,
         events: {
-            "click nav ul li":      "action",
-            "touchstart nav ul li": "action"
+            "click .clickable":      "action",
+            "touchstart .clickable": "action"
         },
         initialize: function(options){
             this.canvasView =   options.canvas;

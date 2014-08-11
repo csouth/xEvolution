@@ -16,9 +16,9 @@ define([
             
         },
         initialize: function(options){
-            this.board  =   new Board(null,{canvas:this});
             this.on('place:complete',this.setDimensions);
             this.on('resize:complete',this.setDimensions);
+            this.board  =   new Board(null,{canvas:this});
         },
         setDimensions: function(){
             this.width  =   this.$el.innerWidth();
@@ -29,7 +29,11 @@ define([
             });
         },
         getCanvasContext: function(){
-            return this.$('canvas')[0].getContext('2d');
+            var canvas  =   this.$('canvas')[0];
+            if(canvas){
+                return canvas.getContext('2d');
+            }
+            return null;
         },
         getViewData: function(){
             return {};
